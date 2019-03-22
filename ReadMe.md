@@ -1,4 +1,4 @@
-# scheduled.manage 手册
+# scheduled.preventer 手册
 
 ## 1.What for/解决什么问题
 
