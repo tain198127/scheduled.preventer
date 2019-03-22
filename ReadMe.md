@@ -72,4 +72,4 @@ In my implementation, I get the real class and method names behind these tasks. 
 
 May someone asked me "why dosen't you use AOP"? Honestly, I had tried it, a main reason make me to discard AOP, that is ***AOP will prevent all candidate method no matter what invoker is***. Which means, AOP is a kind of "AOE" skill, it does prevent the "Scheduled" way, and it prevented all the other Spring ways to invoke it at the same time. That is too hard to use.
 
-也许有人问我“你为什么不用AOP呢？”真的，我尝试过。使用AOP最大的问题是 ***它会阻止所有的调用者***。换句话说，AOP是一种AOE技能，它的确阻止了"Schedule"自动启动的方式，但是同时，它也阻止了其他使用spring方式的调用。这个对于实际使用来说，太"硬"了。
+也许有人问我“你为什么不用AOP呢？”真的，我尝试过。使用AOP最大的问题是 ***它会阻止所有的调用者***。换句话说，AOP是一种AOE技能，它的确阻止了"Schedule"自动启动的方式，但是同时，它也阻止了其他使用spring方式的调用。这个对于实际使用来说，太"硬"了。
