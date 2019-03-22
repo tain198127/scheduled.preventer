@@ -10,7 +10,7 @@ import java.util.List;
  * @author DaneBrown
  * email:tain198127@163.com
  **/
-@ConfigurationProperties(prefix = "com.dane.brown.scheduled.manage")
+@ConfigurationProperties(prefix = "com.dane.brown.scheduled.preventer")
 @Component
 public class PreventAutoRunScheduledConfig {
     public List<String> getPreventRegex() {
