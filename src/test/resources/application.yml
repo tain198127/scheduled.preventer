@@ -7,6 +7,6 @@ com:
     brown:
       scheduled:
         preventer:
-          prevent-regex: com.dane.brown.*.test1,com.dane.brown.*.test2
+          prevent-regex: com.dane.brown.*.test1,com.dane.brown.*.test3
 logging:
   level: debug

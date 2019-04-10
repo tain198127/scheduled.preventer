@@ -46,8 +46,9 @@ public class AppTest extends SpringBootServletInitializer
         log.debug("test2");
     }
     @Scheduled(cron = "* * * * * ?")
-    public void test3(){
+    public void test3() throws InterruptedException {
         System.out.println("test3");
+        Thread.sleep(5000);
         log.debug("test3");
     }
 

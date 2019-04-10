@@ -10,6 +10,8 @@ In to test environment , people may want to ***stop automatically to run schedul
 
 ## 2. How to/如何使用
 
+### 2.1 configuration/配置自动运行
+
 + Target app **must** with **springboot**
 + 目标程序必须使用springboot框架
 
@@ -46,6 +48,45 @@ com:
 The **prevent-regex** is regex which means you want to preventing, split by comma.
 
 上述的**prevent-regex** 表示正则表达式列表，用逗号, 分割。
+
+### 2.2 generate http api/通用http接口
+
+#### 2.2.1 generalschedulingquery
+
+Used to query the status of certain batches, including execution time, etc.
+
+用于查询某些批处理的状态，包括执行时间等
+
+*syntax*:
+http://{host}:{port}/{webapppath}/***generalschedulingquery***/{you scheduled class full name}/{you scheduled method}
+
+example：
+http://localhost:8080/generalschedulingquery/com.dane.brown.AppTest/test3
+
+or
+
+```shell
+curl "http://localhost:8080/generalschedulingquery/com.dane.brown.AppTest/test3"
+```
+
+
+#### 2.2.1 generalschedulinginvoke:
+
+Used to manually execute some batches. If the batch to be executed is still running, the plugin will terminate the http request and return.
+
+用于手动执行某些批处理，如果要执行的批处理还在运行过程中，本插件会终止http请求并返回。
+
+*syntax*:
+http://{host}:{port}/{webapppath}/***generalschedulinginvoke***/{you scheduled class full name}/{you scheduled method}
+
+example:
+http://localhost:8080/generalschedulinginvoke/com.dane.brown.AppTest/test3
+
+or
+
+```shell
+curl "http://localhost:8080/generalschedulinginvoke/com.dane.brown.AppTest/test3"
+```
 
 ------
 

@@ -67,11 +67,8 @@ public class SchedulingConfigurerImpl implements SchedulingConfigurer {
 
     private String getTaskRealFuncName(Task task) {
         ScheduledMethodRunnable realRunnable = (ScheduledMethodRunnable)task.getRunnable();
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(realRunnable.getMethod().getDeclaringClass().getName());
-        stringBuilder.append(".");
-        stringBuilder.append(realRunnable.getMethod().getName());
-        String taskName = stringBuilder.toString();
+        String taskName = RunnableHolder.getInstance().makeKey(realRunnable);
+        RunnableHolder.getInstance().put(taskName, realRunnable);
         log.debug("SchedulingConfigurerImpl——>getTaskRealFuncName:{}",taskName);
         return taskName;
 
