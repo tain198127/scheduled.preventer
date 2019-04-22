@@ -1,0 +1,150 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+
+<div th:fragment="ScheduledDetail" id="ScheduledDetail_ID" style="display: none;">
+    <!--<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">-->
+        <!--<legend>定时器详情</legend>-->
+    <!--</fieldset>-->
+    <div class="layui-form" id="scheduled_detail_form" lay-filter="scheduled_detail_form">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">任务名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="taskName" lay-verify="title" autocomplete="off"
+                           class="layui-input" th:readonly="true"></input>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">当前状态</label>
+                <div class="layui-input-block">
+                    <input type="text" name="currentStatus" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">最后一次开始时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="lastBeginTime" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">最后一次结束时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="lastFinishTime" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">-->
+        <!--<legend>表达式</legend>-->
+    <!--</fieldset>-->
+    <div class="layui-form" id="scheduled_annotation_form" lay-filter="scheduled_annotation_form">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">表达式</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cron" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">时区</label>
+                <div class="layui-input-block">
+                    <input type="text" name="zone" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">间隔时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="fixedDelay" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">间隔时间字符串</label>
+                <div class="layui-input-block">
+                    <input type="text" name="fixedDelayString" lay-verify="title" autocomplete="off"
+                           class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">频率</label>
+                <div class="layui-input-block">
+                    <input type="text" name="fixedRate" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">频率字符串</label>
+                <div class="layui-input-block">
+                    <input type="text" name="fixedRateString" lay-verify="title" autocomplete="off"
+                           class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">延迟</label>
+                <div class="layui-input-block">
+                    <input type="text" name="initialDelay" lay-verify="title" autocomplete="off" class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">延迟字符串</label>
+                <div class="layui-input-block">
+                    <input type="text" name="initialDelayString" lay-verify="title" autocomplete="off"
+                           class="layui-input"
+                           v-model="message" readonly="readonly"></input>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <script type="text/javascript" th:inline="javascript">
+        "<![CDATA["
+        var ScheduledDetailFormPutData;
+        layui.use(['form', 'layer', 'jquery'], function () {
+            var form = layui.form, layer = layui.layer;
+            ScheduledDetailFormPutData = function (jsonData) {
+
+                form.val('scheduled_detail_form', {
+                    'taskName': jsonData.taskName,
+                    'lastBeginTime': jsonData.lastBeginTime,
+                    'lastFinishTime': jsonData.lastFinishTime,
+                    'currentStatus': jsonData.currentStatus,
+                });
+                form.val('scheduled_annotation_form', {
+                    'cron': jsonData.annotation.cron,
+                    'zone': jsonData.annotation.zone,
+                    'fixedDelay': jsonData.annotation.fixedDelay,
+                    'fixedDelayString': jsonData.annotation.fixedDelayString,
+                    'fixedRate': jsonData.annotation.fixedRate,
+                    'fixedRateString': jsonData.annotation.fixedRateString,
+                    'initialDelay': jsonData.annotation.initialDelay,
+                    'initialDelayString': jsonData.annotation.initialDelayString
+                });
+            }
+        });
+
+        "]]>"
+    </script>
+</div>
+</html>

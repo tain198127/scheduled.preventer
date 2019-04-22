@@ -10,6 +10,7 @@ import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,10 +29,9 @@ public class GeneralSchedulingInvokeAction {
     @Autowired
     private ApplicationContext context;
 
-    private RunnableHolder.ScheduledStatus queryStatus(String clzName, String methodName, InvokeActionResult result) throws InovkeActionException {
-        String key = RunnableHolder.getInstance().makeKey(clzName, methodName);
+    RunnableHolder.ScheduledStatus queryStatus(String key, InvokeActionResult result) throws InovkeActionException {
         RunnableHolder.ScheduledStatus status = RunnableHolder.getInstance().getMethodRunnable().get(key);
-        if(status == null){
+        if (status == null) {
             throw new InovkeActionException(key + "未找到", 404);
         }
         result.setCurrentStatus(status.getCurrentStatus());
@@ -42,7 +42,7 @@ public class GeneralSchedulingInvokeAction {
 
         Object object = scheduledMethodRunnable.getTarget();
         if (object == null) {
-            throw new InovkeActionException(clzName + "未找到", 404);
+            throw new InovkeActionException(key + "未找到", 404);
         }
         Method method = scheduledMethodRunnable.getMethod();
         if (method == null) {
@@ -54,6 +54,11 @@ public class GeneralSchedulingInvokeAction {
         }
 
         return status;
+    }
+
+    RunnableHolder.ScheduledStatus queryStatus(String clzName, String methodName, InvokeActionResult result) throws InovkeActionException {
+        String key = RunnableHolder.getInstance().makeKey(clzName, methodName);
+        return queryStatus(key, result);
     }
 
     /**
@@ -86,12 +91,22 @@ public class GeneralSchedulingInvokeAction {
      */
     @RequestMapping(value = "/generalschedulinginvoke/{clzName}/{methodName}", method = RequestMethod.GET)
     public Object invoke(@PathVariable(value = "clzName") String clzName, @PathVariable(value = "methodName") String methodName) {
+        String key = RunnableHolder.getInstance().makeKey(clzName, methodName);
+        return invoke(key);
+    }
+
+    /**
+     * @param key 被调函数类名.函数名
+     * @return 调用结果
+     */
+    @RequestMapping(value = "/generalschedulinginvokebykey")
+    public Object invoke(@RequestParam(value = "key") String key) {
         InvokeActionResult result = new InvokeActionResult();
 
         try {
 
-            RunnableHolder.ScheduledStatus status = queryStatus(clzName, methodName, result);
-            if(result.getCurrentStatus() == RunnableHolder.ScheduledStatusEnum.Running){
+            RunnableHolder.ScheduledStatus status = queryStatus(key, result);
+            if (result.getCurrentStatus() == RunnableHolder.ScheduledStatusEnum.Running) {
                 return result;
             }
             context.getBean(GeneralSchedulingInvokeAction.class).asyncInvoke(status.getScheduledMethodRunnable().getTarget(), status.getScheduledMethodRunnable().getMethod());
@@ -121,52 +136,5 @@ public class GeneralSchedulingInvokeAction {
         }
     }
 
-    @Data
-    public static class InvokeActionResult {
-        private int status;
-        private String message;
-        /**
-         * 最后一次开始时间
-         */
-        private Date lastBeginTime;
-        /**
-         * 最后一次结束时间
-         */
-        private Date lastFinishTime;
-        /**
-         * 当前状态
-         */
-        private RunnableHolder.ScheduledStatusEnum currentStatus;
 
-    }
-
-    /**
-     *
-     */
-    public static class InovkeActionException extends Exception {
-        private int resultCode;
-
-        public InovkeActionException(String msg) {
-            super(msg);
-        }
-
-        public InovkeActionException(String msg, Throwable t) {
-            super(msg, t);
-        }
-
-        public InovkeActionException(String msg, int resultCode, Throwable t) {
-            super(msg, t);
-            this.resultCode = resultCode;
-        }
-
-        public InovkeActionException(String msg, int resultCode) {
-            super(msg);
-            this.resultCode = resultCode;
-        }
-
-        public int getResultCode() {
-            return resultCode;
-        }
-
-    }
 }

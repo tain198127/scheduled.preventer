@@ -1,0 +1,148 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+
+<div th:fragment="ScheduledList" class="layui-table">
+    <script type="text/html" id="scheduled_button">
+        <div class="layui-btn-container">
+            <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="detail">查看</a>
+            <a class="layui-btn layui-btn-sm layui-btn-warm" lay-event="execute">执行</a>
+            <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+        </div>
+    </script>
+    <div style="padding: 15px;">
+        <table id="scheduledlist" lay-filter="test"></table>
+    </div>
+    <script type="text/javascript" th:inline="javascript">
+        "<![CDATA["
+        layui.use(['table', 'form','layer','jquery'], function () {
+            var layer = layui.layer;
+            var cheduledlisturl = [[@{/scheduledmanage/scheduledlist}]];
+            var cheduled_detail_url = [[@{/scheduledmanage/scheduleddetail}]];
+            var cheduled_execute_url = [[@{/generalschedulinginvokebykey}]];
+            var table = layui.table;
+            var $ = layui.jquery;
+            table.render({
+                elem: '#scheduledlist'
+                , height: 312
+                , url: cheduledlisturl
+                , parseData: function f(res) {
+                    return {
+                        "code": 0,
+                        "msg": "ok",
+                        "count": res.length,
+                        "data": res
+                    }
+                }
+                , id: 'scheduled_manage_list'
+                , page: false //开启分页
+                , cols: [[ //表头
+                    {
+                        fixed: 'left', align: 'center', toolbar: '#scheduled_button'
+                    },
+                    {field: 'taskName', title: '任务名称'}
+                    , {field: 'currentStatus', title: '当前状态', width: 120}
+                    , {
+                        field: 'lastBeginTime', title: '最后一次开始时间', templet: function (d) {
+                            return layui.util.toDateString(d.lastBeginTime, "yyyy-MM-dd HH:mm:ss");
+                        }
+                    }
+                    , {
+                        field: 'lastFinishTime', title: '最后一次结束时间', templet: function (row) {
+                            return layui.util.toDateString(row.lastFinishTime, "yyyy-MM-dd HH:mm:ss");
+                        }
+                    }
+
+
+
+                ]]
+            });
+
+            var showDetail = function (data) {
+                $.ajax(cheduled_detail_url,{
+                    type:'get',
+                    dataType:'json',
+                    data:{'key':data.taskName},
+                    error:function(server_ret){
+                        layer.error("任务"+data.taskName+"调用失败,状态:"+server_ret.message+"code:["+server_ret.status+"]", {icon:5,time:3000});
+                    },
+                    success:function (server_ret) {
+                        // layer.msg("任务"+data.taskName+"调用成功,状态:"+server_ret.message+"code:["+server_ret.status+"]",{icon:1,time:2000});
+                        //回调cbk
+                        layer.open({
+                            type:1,
+                            title:["任务:"+data.taskName,'font-size:18px; font-weight:blod'],
+                            closeBtn:1
+                            // ,shadeClose:true
+                            ,area: ['600px','400px']
+                            ,shade: 0.8
+                            ,id: 'scheduleDetailLayout' //设定一个id，防止重复弹出
+                            ,btn: ['ok']
+                            ,btnAlign: 'c'
+                            ,moveType: 1 //拖拽模式，0或者1
+                            ,content:$('#ScheduledDetail_ID').html()
+                            ,success:function (layero,index) {
+                                ScheduledDetailFormPutData(server_ret.data);
+                            }
+                        });
+
+                    }
+                });
+            };
+            var executeSchedule = function (data, cbk) {
+                layer.confirm("确定要执行么?",
+                    {icon: 3, title: '提示',content:'确定要执行么？',btn: ['确定', '否']},
+                    //确认事件
+                    function(rst){
+                    //请求后台
+                        console.log(cheduled_execute_url+"/"+data.taskName);
+                        $.ajax(cheduled_execute_url,
+                            {
+                                type:'post',
+                                dataType:'json',
+                                data:{'key':data.taskName},
+                                error:function(server_ret){
+                                    layer.error("任务"+data.taskName+"调用失败,状态:"+server_ret.message+"code:["+server_ret.status+"]", {icon:5,time:3000});
+                                    layer.close(rst);
+                                },
+                                success:function (server_ret) {
+                                    console.log(server_ret);
+                                    //回调cbk
+                                    cbk("ok",
+                                        function () {
+                                            //外部回调，主要为了保证异步顺序
+                                            layer.msg("任务"+data.taskName+"调用成功,状态:"+server_ret.message+"code:["+server_ret.status+"]",{icon:1,time:3000});
+                                            layer.close(rst);
+                                        });
+                                }
+                        });
+                    }
+                );
+
+            };
+
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                if (obj && obj.data && obj.event) {
+                    switch (obj.event) {
+                        case 'detail': {
+                            showDetail(obj.data);
+                        };break;
+                        case 'execute': {
+                            executeSchedule(obj.data, function (ret, cbk) {
+                                table.reload('scheduled_manage_list');
+                                cbk();
+                            });
+                        };break;
+                    }
+                }
+
+            });
+
+            form.render();
+        });
+
+        "]]>"
+    </script>
+
+
+</div>
+</html>

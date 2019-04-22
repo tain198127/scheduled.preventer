@@ -88,6 +88,20 @@ or
 curl "http://localhost:8080/generalschedulinginvoke/com.dane.brown.AppTest/test3"
 ```
 
+### 2.3 Management gui interface
+ 
+#### 2.3.1 scheduledmanage from 1.2
+
+Starting from 1.2, the management interface has been added. If you need to manage the interface, you can enter it in the corresponding webapp application directory.
+
+从1.2开始，增加了管理界面，如果需要管理界面，可以在对应的schedule_webapp应用目录下输入http://{host}:{port}/{your_schedule_webapp}/scheduledmanage/index  
+
+eg.
+
+例如
+
+http://localhost:8080/someschedule/scheduledmanage/index
+
 ------
 
 ## 3.Essential/本质

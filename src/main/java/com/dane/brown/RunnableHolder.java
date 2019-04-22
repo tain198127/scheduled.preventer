@@ -1,5 +1,7 @@
 package com.dane.brown;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.Data;
 import org.springframework.scheduling.support.ScheduledMethodRunnable;
@@ -88,7 +90,13 @@ public class RunnableHolder {
         /**
          * 任务名称 包含了一些容器
          */
+        @JsonIgnore
+        @JsonIgnoreProperties
         private ScheduledMethodRunnable scheduledMethodRunnable;
+        /**
+         * 枚举定义
+         */
+        private SchedulePresention annotation;
     }
     public static enum ScheduledStatusEnum {
         /*正在运行*/
